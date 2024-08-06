@@ -17,7 +17,6 @@ const connectDB=async(req,res)=>{
     //     desciption:`Database not connected`
     // })
     console.log(`Error occured ${error}`.bgRed.white)
-
    }
 }
 
