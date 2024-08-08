@@ -4,7 +4,7 @@ const ProductCollection=require("../../models/ProductSchema")
 
 const getproductcontroller=async(req,res)=>{
     try{
-        const {category, name, sub_category}=req.params;
+        const {category, name, sub_category,id}=req.params;
         let products
         if(category){
 
@@ -20,6 +20,33 @@ const getproductcontroller=async(req,res)=>{
                 name:{$regex:new RegExp(searchname,'i')}})
 
         } 
+        else if(id){
+
+            products=await ProductCollection.find({
+               _id:id})
+
+        }
+        else if(req.path.includes("/random")){
+            products=await ProductCollection.aggregate([
+                {
+                    $sample:{
+                        size:9,
+                    },
+                },
+            ])
+        }
+        else if(req.path.includes("/top-rated")){
+            products=await ProductCollection.find().sort({rating:-1}).limit(9)
+           
+        }
+        else if(req.path.includes("/lowtohigh")){
+            products=await ProductCollection.find().sort({new_price:1}).limit(9)
+
+        }
+        else if(req.path.includes("/hightolow")){
+            products=await ProductCollection.find().sort({new_price:-1}).limit(9)
+
+        }
         else if(sub_category){
 
             const searchsubcategory=sub_category.toLowerCase();
